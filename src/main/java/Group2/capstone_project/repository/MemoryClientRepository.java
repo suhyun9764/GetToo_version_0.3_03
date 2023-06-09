@@ -1,7 +1,9 @@
 package Group2.capstone_project.repository;
 
+import Group2.capstone_project.domain.Apply;
 import Group2.capstone_project.domain.Client;
 import Group2.capstone_project.domain.Club;
+import Group2.capstone_project.domain.MemberShip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +82,26 @@ public class MemoryClientRepository implements ClientRepository{
         return null;
     }
 
+    @Override
+    public void clubAuth(String clientName, String clubName) {
+
+    }
+
+    @Override
+    public void clubReject(String clientName, String clubName) {
+
+    }
+
+    @Override
+    public void applyClub(Apply apply) {
+
+    }
+
+    @Override
+    public Optional<MemberShip> getApplyClub(String clubName, String clientName) {
+        return Optional.empty();
+    }
+
 
     @Override
     public Optional<Client> findPwd(String name, String id, String studentNumber, String question, String answer) {
@@ -93,4 +115,6 @@ public class MemoryClientRepository implements ClientRepository{
     {
         return clients;
     }
+
+
 }

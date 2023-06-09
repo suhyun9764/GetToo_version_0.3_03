@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width", initial-scale="1.0">
-<link rel="icon" href="./img/gettoo.ico">
-<link rel="stylesheet" href="group_form.css">
+<link rel="icon" href="/img/gettoo.ico">
+<link rel="stylesheet" href="/group_form.css">
 <title>GET-TOO</title>
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="navbar_logo">
-                <a href="login_index.html"><img src="./img/nav_logo.png"/></a>
+                <a href="login_index.html"><img src="/img/nav_logo.png"/></a>
             </div>
             <div class="navbar_menu">
                 <ul class="main_menu">
-                    <li><a href="####">안녕하세요, <span style="font-weight: bold;">박시영</span>님 ∨
+                    <li><a href="####">안녕하세요, <span style="font-weight: bold;"th:text="${name}"></span>님 ∨
                         <ul class="sub_menu">
-                            <li><a href="login_profile.html" style="font-size: 15px; margin-left: 5px;">프로필</a></li>
-                            <li><a href="login_group.html" style="font-size: 15px; margin-left: 5px;">동아리</a></li>
-                            <li><form style="cursor: pointer;">
-                                <button action="####" style="border: 0;
+                            <li><a href="clientInfo" style="font-size: 15px; margin-left: 5px;">프로필</a></li>
+                            <li><a href="loginGroup" style="font-size: 15px; margin-left: 5px;">동아리</a></li>
+                            <li><form action="/clientlogout" method="post"style="cursor: pointer;">
+                                <button type ="submit" style="border: 0;
                                 background-color: transparent; cursor: pointer; font-size: 15px;">로그아웃</button>
-                                </form></li>
+                            </form></li>
                         </ul>
                     </li>
                 </ul>
@@ -34,9 +34,8 @@
 
     <section id="s1">
         <div class="profile">
-            <a href="login_index.html"><img src="./img/icon_back.png" style="width: 30px; float: left;"></a>
             <div class="profile_img">
-                <img src="./group/야사모.jpg">
+                <img src="/img/group/야사모.jpg">
             </div>
             <div class="profile_name">
                 <h1>야사모</h1>
@@ -88,20 +87,20 @@
                         <th scope="row">활동사진</th>
                     </tr>
                     <tr>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
                     </tr>
                     <tr>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
-                        <td><img src="./img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
+                        <td><img src="/img/프로필사진.jpeg" style="width: 250px;"></td>
                     </tr>
                 </table>
                 
             </div>
             <div class="profile_btn">
-                <button class="form_action"><a href="apply_form.html">지원하기</a></button>
+                <button class="form_action"><a href="/loginClient/goApplyForm?name=야사모">지원하기</a></button>
                 <button class="form_back"><a href="login_index.html">뒤로가기</a></button>
             </div>
         </div>

@@ -1,7 +1,9 @@
 package Group2.capstone_project.repository;
 
+import Group2.capstone_project.domain.Apply;
 import Group2.capstone_project.domain.Client;
 import Group2.capstone_project.domain.Club;
+import Group2.capstone_project.domain.MemberShip;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -19,9 +21,9 @@ public class MysqlClientRepository implements ClientRepository{
     @Override
     public void save(Client client) {
 
-        String sql = "INSERT INTO client(id,name,age,studentNumber,email,school,department, pwd,imagepath,question, answer,club,Leader) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO client(id,name,age,studentNumber,email,school,department, pwd,imagepath,question, answer) values(?,?,?,?,?,?,?,?,?,?,?)";
         jdbcTemplate.update(sql,client.getId(),client.getName(),client.getAge(),client.getStudentNumber(),
-                client.getEmail(),client.getSchool(),client.getDepartment(),client.getPwd(),client.getImagePath(),client.getQuestion(),client.getAnswer(),client.getClub(),client.getLeader());
+                client.getEmail(),client.getSchool(),client.getDepartment(),client.getPwd(),client.getImagePath(),client.getQuestion(),client.getAnswer());
     }
 
     @Override
@@ -77,11 +79,9 @@ public class MysqlClientRepository implements ClientRepository{
             client.setEmail(rs.getString("email"));
             client.setSchool(rs.getString("school"));
             client.setDepartment(rs.getString("department"));
-            client.setLeader(rs.getString("Leader"));
             client.setJoinCheck(rs.getString("joincheck"));
             client.setAdminCheck(rs.getString("admincheck"));
             client.setImagePath(rs.getString("imagepath"));
-            client.setClub("club");
             return client;
         };
     }
@@ -152,6 +152,37 @@ public class MysqlClientRepository implements ClientRepository{
         return club;
     }
 
+    @Override
+    public void clubAuth(String clientName, String clubName) {
+        String sql = "UPDATE membership SET joinAuth ='OK' WHERE studentName=? AND clubName=?";
+        String[] ob = {clientName,clubName};
+        jdbcTemplate.update(sql,ob);
+    }
+
+    @Override
+    public void clubReject(String clientName, String clubName) {
+        String sql = "DELETE FROM membership WHERE studentName = ? AND clubName = ?";
+        String[] ob = {clientName,clubName};
+        jdbcTemplate.update(sql,ob);
+    }
+
+    @Override
+    public void applyClub(Apply apply) {
+        String sql = "INSERT INTO membership(studentName,clubName,motive,intro) values(?,?,?,?)";
+        String[] ob = {apply.getClientName(),apply.getClubName(), apply.getMotive(), apply.getIntro()};
+        jdbcTemplate.update(sql,ob);
+    }
+
+    @Override
+    public Optional<MemberShip> getApplyClub(String clubName, String clientName) {
+        String sql = "SELECT motive,intro FROM membership WHERE clubName=? AND studentName=? AND joinAuth=?";
+        String[] ob = {clubName,clientName,"NO"};
+        List<MemberShip> memberShips = jdbcTemplate.query(sql,memberShipRowMapper(),ob);
+
+        return memberShips.stream().findAny();
+    }
+
+
     private RowMapper<Club> clubRowMapper(){
         return (rs, rowNum) -> {
             Club club = new Club();
@@ -160,6 +191,17 @@ public class MysqlClientRepository implements ClientRepository{
             return club;
         };
     }
+
+    private RowMapper<MemberShip> memberShipRowMapper(){
+        return (rs, rowNum) -> {
+            MemberShip memberShip = new MemberShip();
+            memberShip.setIntro(rs.getString("intro"));
+            memberShip.setMotive(rs.getString("motive"));
+            return memberShip;
+        };
+    }
+
+
     @Override
     public void updatePwd(String id, String newEncodePwd) {
         String sql = "UPDATE client SET pwd= ? WHERE id =?  ";

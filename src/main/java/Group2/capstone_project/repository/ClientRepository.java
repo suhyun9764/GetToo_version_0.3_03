@@ -1,7 +1,9 @@
 package Group2.capstone_project.repository;
 
+import Group2.capstone_project.domain.Apply;
 import Group2.capstone_project.domain.Client;
 import Group2.capstone_project.domain.Club;
+import Group2.capstone_project.domain.MemberShip;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +32,12 @@ public interface ClientRepository {
 
     Club getClubByName(String clubName);
 
+    void clubAuth(String clientName,String clubName);
 
+    void clubReject(String clientName,String clubName);
+
+    void applyClub(Apply apply);
+
+
+    Optional<MemberShip> getApplyClub(String clubName, String clientName);
 }

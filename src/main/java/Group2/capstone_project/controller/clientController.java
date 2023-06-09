@@ -1,7 +1,10 @@
 package Group2.capstone_project.controller;
 
+import Group2.capstone_project.domain.Apply;
 import Group2.capstone_project.domain.Client;
 import Group2.capstone_project.domain.Club;
+import Group2.capstone_project.domain.MemberShip;
+import Group2.capstone_project.dto.client.ApplyDto;
 import Group2.capstone_project.dto.client.ClientDto;
 import Group2.capstone_project.service.clientService;
 import Group2.capstone_project.session.SessionConst;
@@ -72,7 +75,7 @@ public class clientController {
 
     @GetMapping("/loginClient")
     public String loginClient(Model model, HttpServletRequest request) {
-        System.out.println("adcome0");
+
         HttpSession session = request.getSession(false);
         if(session == null){
             return "login.html";
@@ -80,7 +83,6 @@ public class clientController {
         if(session!=null){
             Client client = (Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
             if(client!=null){
-                System.out.println("adcome1");
                 model.addAttribute("name", client.getName());
                 return "loginClient/login_index.html";
             }
@@ -540,7 +542,10 @@ public class clientController {
     }
 
     @GetMapping("/loginClient/goClub")
-    public String goClub(@RequestParam("name") String name){
+    public String goClub(@RequestParam("name") String name,Model model,HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        Client client = (Client)session.getAttribute(SessionConst.LOGIN_CLIENT);
+        model.addAttribute("name",client.getName());
         return "loginClient/"+name+".html";
     }
 
@@ -549,13 +554,68 @@ public class clientController {
         HttpSession session = request.getSession(false);
         Client client = (Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
         Club club = clientserivce.getClubByClubName(clubName);
+        List<Client> clients = clientserivce.getWaitJoinClub(club.getClubName());
+
         if(client.getId()!=club.getLeader()){
             model.addAttribute("errorMessage","권한이 없습니다");
         }
+        model.addAttribute("club",club);
+        model.addAttribute("clients",clients);
+
+        return "loginClient/clubjoinAuth.html";
+    }
+
+    @PostMapping("/loginClient/clubAuth")
+    public String clubAuth(@RequestParam("clientId") String clientId, @RequestParam("clubName") String clubName,Model model){
+        clientserivce.clubAuth(clientId,clubName);
+        Club club = clientserivce.getClubByClubName(clubName);
         List<Client> clients = clientserivce.getWaitJoinClub(club.getClubName());
         model.addAttribute("club",club);
         model.addAttribute("clients",clients);
         return "loginClient/clubjoinAuth.html";
     }
+
+    @PostMapping("/loginClient/clubReject")
+    public String clubReject(@RequestParam("clientId") String clientId, @RequestParam("clubName") String clubName,Model model){
+        clientserivce.clubReject(clientId,clubName);
+        Club club = clientserivce.getClubByClubName(clubName);
+        List<Client> clients = clientserivce.getWaitJoinClub(club.getClubName());
+        model.addAttribute("club",club);
+        model.addAttribute("clients",clients);
+        return "loginClient/clubjoinAuth.html";
+    }
+    @GetMapping("loginClient/goApplyForm")
+    public String goApplyForm(Model model,HttpServletRequest request,@RequestParam("name") String name){
+        HttpSession session = request.getSession(false);
+
+        Client client = (Client)session.getAttribute(SessionConst.LOGIN_CLIENT);
+        Club club = clientserivce.getClubByClubName(name);
+        model.addAttribute("club",club);
+        model.addAttribute("client",client);
+
+        return "loginClient/apply_form.html";
+    }
+
+    @PostMapping("loginClient/applyClub")
+    public String applyClub(ApplyDto applyDto ){
+
+        Apply apply = new Apply();
+        apply.setClientName(applyDto.getClientName());
+        apply.setClubName(applyDto.getClubName());
+        apply.setMotive(applyDto.getMotive());
+        apply.setIntro(applyDto.getIntro());
+        clientserivce.applyClub(apply);
+
+        return "redirect:/loginClient/loginGroup";
+    }
+
+    @GetMapping("/loginClient/checkMotiveIntro")
+    public String checkMotiveIntro(Model model,@RequestParam("clientId") String clientID, @RequestParam("clubName") String clubName){
+        MemberShip apply = clientserivce.getApply(clubName,clientID);
+        model.addAttribute("apply",apply);
+        return "loginClient/motiveIntro.html";
+    }
+
+
 
 }

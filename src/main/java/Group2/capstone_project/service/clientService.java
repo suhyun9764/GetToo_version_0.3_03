@@ -1,7 +1,9 @@
 package Group2.capstone_project.service;
 
+import Group2.capstone_project.domain.Apply;
 import Group2.capstone_project.domain.Client;
 import Group2.capstone_project.domain.Club;
+import Group2.capstone_project.domain.MemberShip;
 import Group2.capstone_project.repository.ClientRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -129,5 +131,23 @@ public class clientService {
     public Club getClubByClubName(String clubName){
         Club club = clientRepository.getClubByName(clubName);
         return club;
+    }
+
+    public void clubAuth(String clientName,String clubName){
+        clientRepository.clubAuth(clientName,clubName);
+    }
+
+    public void clubReject(String clientName,String clubName){
+        clientRepository.clubReject(clientName,clubName);
+    }
+
+    public void applyClub(Apply apply){
+        clientRepository.applyClub(apply);
+    }
+
+    public MemberShip getApply(String clubName, String clientName){
+        Optional<MemberShip> memberShip = clientRepository.getApplyClub(clubName,clientName);
+        MemberShip memberShip1 = memberShip.get();
+        return memberShip1;
     }
 }
