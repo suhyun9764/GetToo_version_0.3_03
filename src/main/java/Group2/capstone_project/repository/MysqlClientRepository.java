@@ -102,8 +102,10 @@ public class MysqlClientRepository implements ClientRepository{
 
     @Override
     public void clientDelete(String id, String studentNumber) {
-        String sql = "DELETE FROM client WHERE id = ? AND studentNumber = ?";
-       jdbcTemplate.update(sql,id,studentNumber);
+        String sql1 = "DELETE FROM membership WHERE studentName = ?";
+        String sql2 = "DELETE FROM client WHERE id = ? AND studentNumber = ?";
+        jdbcTemplate.update(sql1,id);
+       jdbcTemplate.update(sql2,id,studentNumber);
     }
 
     @Override
@@ -175,9 +177,18 @@ public class MysqlClientRepository implements ClientRepository{
 
     @Override
     public Optional<MemberShip> getApplyClub(String clubName, String clientName) {
-        String sql = "SELECT motive,intro FROM membership WHERE clubName=? AND studentName=? AND joinAuth=?";
+        String sql = "SELECT motive,intro,clubName FROM membership WHERE clubName=? AND studentName=? AND joinAuth=?";
         String[] ob = {clubName,clientName,"NO"};
         List<MemberShip> memberShips = jdbcTemplate.query(sql,memberShipRowMapper(),ob);
+
+        return memberShips.stream().findAny();
+    }
+
+    @Override
+    public Optional<MemberShip> isJoinClub(String clubName, String clientName) {
+        String sql = "SELECT studentName,clubName,joinAuth FROM membership WHERE clubName=? AND studentName=?";
+        String[] ob = {clubName,clientName};
+        List<MemberShip> memberShips = jdbcTemplate.query(sql,isJoinClubRowMapper(),ob);
 
         return memberShips.stream().findAny();
     }
@@ -195,8 +206,19 @@ public class MysqlClientRepository implements ClientRepository{
     private RowMapper<MemberShip> memberShipRowMapper(){
         return (rs, rowNum) -> {
             MemberShip memberShip = new MemberShip();
+            memberShip.setClubName(rs.getString("clubName"));
             memberShip.setIntro(rs.getString("intro"));
             memberShip.setMotive(rs.getString("motive"));
+            return memberShip;
+        };
+    }
+
+    private RowMapper<MemberShip> isJoinClubRowMapper(){
+        return (rs, rowNum) -> {
+            MemberShip memberShip = new MemberShip();
+            memberShip.setClubName(rs.getString("clubName"));
+            memberShip.setJoinAuth(rs.getString("joinAuth"));
+            memberShip.setStudentName(rs.getString("studentName"));
             return memberShip;
         };
     }

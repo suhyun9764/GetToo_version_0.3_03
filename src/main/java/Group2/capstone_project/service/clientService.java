@@ -150,4 +150,9 @@ public class clientService {
         MemberShip memberShip1 = memberShip.get();
         return memberShip1;
     }
+
+    public Optional<MemberShip> isJoinClub(String clubName,String clientName){
+        Optional<MemberShip> memberShip = clientRepository.isJoinClub(clubName,clientName);
+        return memberShip;
+    }
 }

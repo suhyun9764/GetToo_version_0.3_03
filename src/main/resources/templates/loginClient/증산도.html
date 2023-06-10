@@ -8,10 +8,15 @@
 <title>GET-TOO</title>
 </head>
 <body>
+<div th:if="${errorMessage}">
+    <script th:inline="javascript">
+        alert([[${errorMessage}]]);
+    </script>
+</div>
     <header>
         <nav class="navbar">
             <div class="navbar_logo">
-                <a href="login_index.html"><img src="/img/nav_logo.png"/></a>
+                <a href="/"><img src="/img/nav_logo.png"/></a>
             </div>
             <div class="navbar_menu">
                 <ul class="main_menu">

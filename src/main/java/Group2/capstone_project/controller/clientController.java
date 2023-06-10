@@ -325,14 +325,6 @@ public class clientController {
         return "login.html";
 
     }
-
-    @GetMapping("/client/update")
-        public String updateForm(HttpSession session,Model model){
-        String id = (String)session.getAttribute("loginId");
-        Client client = clientserivce.updateForm(id);
-        model.addAttribute("updateClient",client);
-        return "client/clientinfoupdate";
-    }
     @GetMapping("/admin/list")
     public String adminPage(Model model) {
         List<Client> clients = clientserivce.findAll();
@@ -340,20 +332,6 @@ public class clientController {
 
         return "admin/adminPage"; // 클라이언트 리스트를 표시할 뷰의 이름 반환
     }
-
-
-    @PostMapping("/client/update")
-    public String updateClinet(Model model,@ModelAttribute ClientDto clientDto){
-        Client client = new Client();
-        client.setId(clientDto.getId());
-        client.setName(clientDto.getName());
-        client.setAge(clientDto.getAge());
-        client.setStudentNumber(clientDto.getStudentNumber());
-        clientserivce.updateInfo(client);
-        model.addAttribute("client",client);
-        return "/client/updateresult";
-    }
-
 
 
      @PostMapping ("/clientlogout")
@@ -380,19 +358,45 @@ public class clientController {
         return "loginClient/login_profile.html";
     }
 
+    @GetMapping("/loginClient/gotoDelete")
+    public String gotoDelete(HttpServletRequest request,Model model){
+        HttpSession session = request.getSession(false);
+        Client client = (Client)session.getAttribute(SessionConst.LOGIN_CLIENT);
+        List<Club> clubs = clientserivce.getClubLeaderByClient(client.getId());
+        if(!clubs.isEmpty()){
+            model.addAttribute("errorMessage","동아리장은 탈퇴할 수 없습니다");
+            model.addAttribute("client", client);
+            return "loginClient/login_profile.html";
+        }
+
+        return "loginClient/deletecheckpwd.html";
+    }
     @PostMapping("/loginClient/clientDelete")
-    public String clientDelete(HttpServletRequest request){
+    public String clientDelete(HttpServletRequest request, @RequestParam("password") String password){
         HttpSession session = request.getSession(false);
         Client client = (Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
+        boolean chk = clientserivce.checkPwd(client,password);
+        if(chk){
 
-        clientserivce.clientDelete(client);
-        return "redirect:/afterDelete";
+            clientserivce.clientDelete(client);
+            return "redirect:/afterDelete";
+        }
+        return "redirect:/afterCantDelete";
     }
 
     @GetMapping("/afterDelete")
     public String afterDelete(Model model){
         model.addAttribute("errorMessage", "회원탈퇴가 정상적으로 완료되었습니다. 감사합니다");
         return "login.html";
+    }
+
+    @GetMapping("/afterCantDelete")
+    public String afterCantDelete(HttpServletRequest request,Model model){
+        HttpSession session = request.getSession(false);
+        Client client = (Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
+        model.addAttribute("client", client);
+        model.addAttribute("errorMessage", "비밀번호가 틀렸습니다");
+        return "loginClient/deletecheckpwd.html";
     }
 
     @GetMapping("/loginClient/DeleteInfoPage")
@@ -590,6 +594,19 @@ public class clientController {
 
         Client client = (Client)session.getAttribute(SessionConst.LOGIN_CLIENT);
         Club club = clientserivce.getClubByClubName(name);
+        Optional<MemberShip> memberShipOptional = clientserivce.isJoinClub(club.getClubName(),client.getId());
+        if(memberShipOptional.isPresent()){
+            MemberShip memberShip = memberShipOptional.get();
+            if("OK".equals(memberShip.getJoinAuth())){
+                model.addAttribute("errorMessage","이미 가입된 동아리입니다");
+                model.addAttribute("name",client.getName());
+                return "loginClient/"+name+".html";
+            }else{
+                model.addAttribute("errorMessage","이미 지원한 동아리입니다");
+                model.addAttribute("name",client.getName());
+                return "loginClient/"+name+".html";
+            }
+        }
         model.addAttribute("club",club);
         model.addAttribute("client",client);
 

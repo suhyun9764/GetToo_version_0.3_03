@@ -59,6 +59,7 @@
                 <div class="int-area">
                     <input type="password" name="confirm_password" id="pwCheck" autocomplete="off" required  minlength="7" maxlength="20">
                     <label for="pwCheck"> 비밀번호 확인 (7자 이상)</label>
+                    <span id="password_error" style="color: red;"></span>
                 </div>
 
                 <div class="int-area">
@@ -100,7 +101,7 @@
 
                 <div class="int-area1">
                     <div class="classNum">
-                        <select name = "department" required>
+                        <select name = "department" id="department" required>
                             <option value = "">학과</option>
                             <option value = "글로벌문화콘텐츠학전공">글로벌문화콘텐츠학전공</option>
                             <option value = "국어국문창작학전공">국어국문창작학전공</option>
@@ -171,7 +172,7 @@
 
 
                 <div class="btn-area">
-                    <button id="btn" type="submit" value="Login"> 회원가입 </button>
+                    <button type="submit" id="join-submit"> 회원가입 </button>
                 </div>
             </form>
         </div>
@@ -187,7 +188,6 @@
             let school = $('#school');
             let readcheck = $('#readcheck');
             let btn = $('#btn');
-
 
 
 
@@ -211,21 +211,6 @@
                     });
                 });
             });
-            $(btn).on('click', function() {
-                if($(id).val() == "") {
-                    $(id).next('label').addClass('warning');
-                    setTimeout(function() {
-                        $('label').removeClass('warning');
-                    },1500);
-                }
-                else if($(pw).val() == "") {
-                    $(pfw).next('label').addClass('warning');
-                    setTimeout(function() {
-                        $('label').removeClass('warning');
-                    },1500);
-                }
-            });
-
 
             $(function(){
                 // 회원 가입 처리
@@ -236,9 +221,19 @@
                         $("#id").focus();
                         return false;
                     }
+                    if($("#name").val() ==''){
+                        alert('이름을 입력하세요');
+                        $("#name").focus();
+                        return false;
+                    }
 
                     if($("#pw").val() ==''){
                         alert('비밀번호를 입력하세요');
+                        $("#pw").focus();
+                        return false;
+                    }
+                    if ($("#pw").val().length < 7){
+                        alert('비밀번호는 7자리 이상이어야 합니다.');
                         $("#pw").focus();
                         return false;
                     }
@@ -254,6 +249,12 @@
                         return false;
                     }
 
+                    if ($('#birthday').val()=='') {
+                        alert('생년월일을 입력해주세요');
+                        $('#birthday').focus();
+                        return false;
+                    }
+
                     var email = $('#email').val();
                     if(email == ''){
                         alert('이메일을 입력하세요');
@@ -266,35 +267,50 @@
                             $("#email").focus();
                             return false;
                         }
-                    }
-
-                    $.ajax({
-                        url: 'register.php',
-                        type: 'POST',
-                        data: {
-                            name:$("#name").val(),
-                            userID:$('#id').val(),
-                            email:$('#email').val(),
-                            password:$('#pw').val(),
-                            mobileNO:$("#cellphoneNo").val()
-                        },
-                        dataType: "json",
-                        success: function (response) {
-                            if(response.result == 1){
-                                alert('가입 완료');
-                                location.replace('../index.php'); // 화면 갱신
-                            } else if(response.result == 0){
-                                alert('이미 가입된 아이디입니다');
-                            } else if(response.result == -2){
-                                alert('입력된 값이 없습니다');
-                            } else {
-                                alert('등록중에 에러가 발생했습니다');
-                            }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown){
-                            alert("arjax error : " + textStatus + "\n" + errorThrown);
+                        if ($("#chooseFile").val() == '') {
+                            alert('학생증 사진을 업로드하세요');
+                            return false;
                         }
-                    });
+
+                        if ($("#verificationQuestion").val() == '') {
+                            alert('본인확인 질문을 선택하세요');
+                            $("#verificationQuestion").focus();
+                            return false;
+                        }
+
+                        if ($("#verificationAnswer").val() == '') {
+                            alert('본인확인 질문의 답을 입력하세요');
+                            $("#verificationAnswer").focus();
+                            return false;
+                        }
+
+                        if ($("#department").val() == '') {
+                            alert('학과를 선택하세요');
+                            $("#department").focus();
+                            return false;
+                        }
+
+                        if ($("#classNum").val() == '') {
+                            alert('학번을 입력하세요');
+                            $("#classNum").focus();
+                            return false;
+                        }else if($("#classNum").val().length!=8){
+                            alert('올바른 학번이 아닙니다(8글자)');
+                            $("#classNum").focus();
+                            return false;
+                        }
+
+
+                        if ($('input[name="school"]:checked').length === 0) {
+                            alert('재학여부를 선택하세요');
+                            return false;
+                        }
+                    }
+                    $('form').attr('action', '/client/join');
+                    $('form').attr('method', 'POST');
+                    $('form').attr('enctype', 'multipart/form-data');
+                    $('form').submit();
+
                 });
             });
 
