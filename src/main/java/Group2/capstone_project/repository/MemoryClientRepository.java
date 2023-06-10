@@ -107,6 +107,16 @@ public class MemoryClientRepository implements ClientRepository{
         return Optional.empty();
     }
 
+    @Override
+    public void outClub(String clubName, String clientId) {
+
+    }
+
+    @Override
+    public void cancelApply(String clubName, String clientId) {
+
+    }
+
 
     @Override
     public Optional<Client> findPwd(String name, String id, String studentNumber, String question, String answer) {

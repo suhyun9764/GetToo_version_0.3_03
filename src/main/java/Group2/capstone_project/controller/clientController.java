@@ -92,7 +92,7 @@ public class clientController {
 
     @GetMapping("/admin/adminRedirLogin_index")
     public String adminRedirLoginIndex(){
-        return "redirect:/admin/AdminGoLogin_index";
+        return "redirect:/loginClient";
     }
     @GetMapping("/admin/AdminGoLogin_index")
     public String adminLoginIndex(Model model,HttpServletRequest request){
@@ -192,6 +192,41 @@ public class clientController {
         }
     }
 
+    @GetMapping("/loginClient/outClub")
+    public String outClub(@RequestParam("clubName")String clubName, HttpServletRequest request,Model model){
+        HttpSession session = request.getSession(false);
+        Client client =(Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
+        clientserivce.outClub(clubName,client.getId());
+
+        List<Club> clubs = clientserivce.getClubByClient(client.getId());
+        List<Club> leaderClubs = clientserivce.getClubLeaderByClient(client.getId());
+        List<Club> notJoinClubs = clientserivce.getClubNotAuth(client.getId());
+        model.addAttribute("clubs",clubs);
+        model.addAttribute("leaderClubs",leaderClubs);
+        model.addAttribute("notauthclub",notJoinClubs);
+        model.addAttribute("name",client.getName());
+        model.addAttribute("errorMessage","동아리 탈퇴가완료되었습니다");
+
+        return "loginClient/login_group.html";
+    }
+
+    @GetMapping("/loginClient/cancelApply")
+    public String cancelApply(@RequestParam("clubName")String clubName, HttpServletRequest request,Model model){
+        HttpSession session = request.getSession(false);
+        Client client =(Client) session.getAttribute(SessionConst.LOGIN_CLIENT);
+        clientserivce.cancelApply(clubName,client.getId());
+
+        List<Club> clubs = clientserivce.getClubByClient(client.getId());
+        List<Club> leaderClubs = clientserivce.getClubLeaderByClient(client.getId());
+        List<Club> notJoinClubs = clientserivce.getClubNotAuth(client.getId());
+        model.addAttribute("clubs",clubs);
+        model.addAttribute("leaderClubs",leaderClubs);
+        model.addAttribute("notauthclub",notJoinClubs);
+        model.addAttribute("name",client.getName());
+        model.addAttribute("errorMessage","동아리 지원신청이 취소되었습니다");
+
+        return "loginClient/login_group.html";
+    }
 
 
 
@@ -541,9 +576,10 @@ public class clientController {
             model.addAttribute("notauthclub",notJoinClubs);
             model.addAttribute("name",client.getName());
 
-        model.addAttribute("errorMessage", "비밀번호가 틀렸습니다");
         return "loginClient/login_group.html";
     }
+
+
 
     @GetMapping("/loginClient/goClub")
     public String goClub(@RequestParam("name") String name,Model model,HttpServletRequest request){

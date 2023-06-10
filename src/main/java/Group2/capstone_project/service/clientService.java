@@ -155,4 +155,12 @@ public class clientService {
         Optional<MemberShip> memberShip = clientRepository.isJoinClub(clubName,clientName);
         return memberShip;
     }
+
+    public void outClub(String clubName,String clientId){
+        clientRepository.outClub(clubName,clientId);
+    }
+
+    public void cancelApply(String clubName,String clientId){
+        clientRepository.cancelApply(clubName,clientId);
+    }
 }

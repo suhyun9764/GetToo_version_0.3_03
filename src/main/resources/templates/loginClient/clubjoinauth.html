@@ -15,7 +15,8 @@
       <th>신청자 이메일</th>
       <th>신청자 학과</th>
       <th>지원동기/자기소개</th>
-      <th>승인/거절</th>
+      <th>승인</th>
+      <th>거절</th>
     </tr>
     <tr th:each="client : ${clients}">
       <td><span style="font-weight: bold;"th:text="${client.name}"></span></td>
@@ -32,16 +33,19 @@
 
       <td>
 
-        <form th:action="@{/loginClient/clubAuth}" method="post">
-          <input type="hidden" name="clientId" th:value="${client.id}">
-          <input th:type="hidden" name="clubName" th:value="${club.clubName}">
-          <button class="approval-button" type="submit">승인</button>
-        </form>
-        <form th:action="@{/loginClient/clubReject}" method="post">
-          <input type="hidden" name="clientId" th:value="${client.id}">
-          <input th:type="hidden" name="clubName" th:value="${club.clubName}">
-          <button class="approval-button reject-button" type="submit">거절</button>
-        </form>
+
+          <form th:action="@{/loginClient/clubAuth}" method="post">
+            <input type="hidden" name="clientId" th:value="${client.id}">
+            <input th:type="hidden" name="clubName" th:value="${club.clubName}">
+            <button class="approval-button" type="submit">승인</button>
+          </form>
+      </td>
+      <td>
+          <form th:action="@{/loginClient/clubReject}" method="post">
+            <input type="hidden" name="clientId" th:value="${client.id}">
+            <input th:type="hidden" name="clubName" th:value="${club.clubName}">
+            <button class="approval-button reject-button" type="submit">거절</button>
+          </form>
 
       </td>
     </tr>

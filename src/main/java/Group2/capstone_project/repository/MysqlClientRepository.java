@@ -193,6 +193,21 @@ public class MysqlClientRepository implements ClientRepository{
         return memberShips.stream().findAny();
     }
 
+    @Override
+    public void outClub(String clubName, String clientId) {
+        String sql = "DELETE FROM membership WHERE studentName = ? AND clubName=? AND joinAuth=?";
+        String[] ob = {clientId,clubName,"OK"};
+        jdbcTemplate.update(sql,ob);
+
+    }
+
+    @Override
+    public void cancelApply(String clubName, String clientId) {
+        String sql = "DELETE FROM membership WHERE studentName = ? AND clubName=? AND joinAuth=?";
+        String[] ob = {clientId,clubName,"NO"};
+        jdbcTemplate.update(sql,ob);
+    }
+
 
     private RowMapper<Club> clubRowMapper(){
         return (rs, rowNum) -> {

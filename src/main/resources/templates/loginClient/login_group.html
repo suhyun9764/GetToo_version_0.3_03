@@ -24,6 +24,11 @@
     </script>
 </head>
 <body>
+<div th:if="${errorMessage}">
+    <script th:inline="javascript">
+        alert([[${errorMessage}]]);
+    </script>
+</div>
     <header>
         <nav class="navbar">
             <div class="navbar_logo">
@@ -68,7 +73,7 @@
                             <p>일반회원</p>
                         </div>
                         <div class="card_admin">
-                            <button class="button-style2">탈퇴</a></button>
+                            <button class="button-style2"><a th:href="@{'/loginClient/outClub?clubName=' + ${club.clubName}}" class="card-link" style="color: white;">탈퇴</a></button>
                         </div>
                     </div>
                 </div>
@@ -83,7 +88,7 @@
                             <p>동아리회장</p>
                         </div>
                         <div class="card_admin">
-                            <button class="button-style"><a th:href="@{'/loginClient/goClubJoinAuth?clubName=' + ${leadclub.clubName}}" class="card-link">동아리 관리</a></button>
+                            <button class="button-style"><a th:href="@{'/loginClient/goClubJoinAuth?clubName=' + ${leadclub.clubName}}" class="card-link" style="color: white;">동아리 관리</a></button>
                         </div>
                     </div>
                 </div>
@@ -98,7 +103,7 @@
                             <p>일반회원</p>
                         </div>
                         <div class="card_admin">
-                            <button class="button-style2">탈퇴</a></button>
+                            <button class="button-style2"><a th:href="@{'/loginClient/cancelApply?clubName=' + ${notjclub.clubName}}" class="card-link" style="color: white;">지원취소</a></button>
                         </div>
                     </div>
                 </div>

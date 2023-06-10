@@ -41,4 +41,10 @@ public interface ClientRepository {
 
     Optional<MemberShip> getApplyClub(String clubName, String clientName);
     Optional<MemberShip> isJoinClub(String clubName, String clientName);
+
+    void outClub(String clubName,String clientId);
+
+    void cancelApply(String clubName,String clientId);
+
+
 }
